@@ -185,9 +185,61 @@
     to { transform: rotate(360deg); }
 }
 
+/* Rich Text Editor (Quill) Styling */
+.contact-form-rich-editor {
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form-rich-editor:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.contact-form-rich-editor .ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 6px 6px 0 0;
+    background-color: #f9fafb;
+    padding: 8px;
+}
+
+.contact-form-rich-editor .ql-container {
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.contact-form-rich-editor .ql-editor {
+    min-height: 120px;
+    padding: 12px 14px;
+}
+
+.contact-form-rich-editor .ql-editor.ql-blank::before {
+    color: #9ca3af;
+    font-style: normal;
+}
+
+/* Quill toolbar button styles */
+.contact-form-rich-editor .ql-toolbar button:hover,
+.contact-form-rich-editor .ql-toolbar button:focus {
+    color: #2563eb;
+}
+
+.contact-form-rich-editor .ql-toolbar button.ql-active {
+    color: #2563eb;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .contact-form-row {
         grid-template-columns: 1fr;
+    }
+    
+    .contact-form-hubspot-wrapper {
+        padding: 20px;
+        margin: 20px auto;
     }
 }

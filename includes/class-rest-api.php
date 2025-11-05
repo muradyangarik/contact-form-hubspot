@@ -129,7 +129,7 @@ class ContactFormHubSpot_REST_API {
             'message' => array(
                 'required' => true,
                 'type' => 'string',
-                'sanitize_callback' => 'sanitize_textarea_field',
+                'sanitize_callback' => 'wp_kses_post',
                 'validate_callback' => array($this, 'validate_required_text'),
             ),
             'website' => array(
@@ -168,10 +168,13 @@ class ContactFormHubSpot_REST_API {
             );
         }
         
-        if (strlen($value) > 255) {
+        // Message field can be longer (with HTML), other fields are limited to 255
+        $max_length = ($param === 'message') ? 5000 : 255;
+        
+        if (strlen($value) > $max_length) {
             return new WP_Error(
                 'invalid_' . $param,
-                sprintf(__('%s must be 255 characters or less.', 'contact-form-hubspot'), ucfirst(str_replace('_', ' ', $param))),
+                sprintf(__('%s must be %d characters or less.', 'contact-form-hubspot'), ucfirst(str_replace('_', ' ', $param)), $max_length),
                 array('status' => 400)
             );
         }

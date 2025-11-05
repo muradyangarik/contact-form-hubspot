@@ -7,6 +7,45 @@
 (function($) {
     'use strict';
 
+    // Store Quill editor instances
+    var quillEditors = {};
+
+    // Initialize Quill rich text editors
+    function initializeRichEditors() {
+        $('.contact-form-rich-editor').each(function() {
+            var editorId = $(this).attr('id');
+            var formId = editorId.replace('-message-editor', '');
+            var textareaId = formId + '-message';
+            
+            if (!quillEditors[editorId] && typeof Quill !== 'undefined') {
+                // Initialize Quill editor
+                quillEditors[editorId] = new Quill('#' + editorId, {
+                    theme: 'snow',
+                    placeholder: 'Type your message here...',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link'],
+                            ['clean']
+                        ]
+                    }
+                });
+                
+                // Sync Quill content to hidden textarea
+                quillEditors[editorId].on('text-change', function() {
+                    var html = quillEditors[editorId].root.innerHTML;
+                    $('#' + textareaId).val(html);
+                });
+            }
+        });
+    }
+
+    // Initialize editors when document is ready
+    $(document).ready(function() {
+        initializeRichEditors();
+    });
+
     // Handle form submission
     $('.contact-form-hubspot').on('submit', function(e) {
         e.preventDefault();
@@ -53,6 +92,12 @@
                     
                     // Reset form
                     $form[0].reset();
+                    
+                    // Reset Quill editor
+                    var editorId = $form.attr('id') + '-message-editor';
+                    if (quillEditors[editorId]) {
+                        quillEditors[editorId].setContents([]);
+                    }
                 } else {
                     var errorMessage = response.message || contactFormHubSpot.messages.error;
                     if (response.data && response.data.message) {
@@ -122,6 +167,23 @@
             $error.addClass('visible').html(contactFormHubSpot.messages.validation.email);
         } else {
             $error.removeClass('visible').html('');
+        }
+    });
+    
+    // Validation for Quill editors
+    $(document).on('blur', '.contact-form-rich-editor .ql-editor', function() {
+        var $editor = $(this).closest('.contact-form-rich-editor');
+        var editorId = $editor.attr('id');
+        var $field = $editor.closest('.contact-form-field');
+        var $error = $field.find('.contact-form-error');
+        
+        if (quillEditors[editorId]) {
+            var text = quillEditors[editorId].getText().trim();
+            if (!text || text.length === 0) {
+                $error.addClass('visible').html(contactFormHubSpot.messages.validation.required);
+            } else {
+                $error.removeClass('visible').html('');
+            }
         }
     });
 

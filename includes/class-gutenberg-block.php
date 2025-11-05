@@ -79,18 +79,34 @@ class ContactFormHubSpot_Gutenberg_Block {
      * Enqueue frontend scripts and styles
      */
     public function enqueue_frontend_scripts() {
+        // Register Quill.js for rich text editor
+        wp_register_style(
+            'quill-css',
+            'https://cdn.quilljs.com/1.3.6/quill.snow.css',
+            array(),
+            '1.3.6'
+        );
+        
+        wp_register_script(
+            'quill-js',
+            'https://cdn.quilljs.com/1.3.6/quill.min.js',
+            array(),
+            '1.3.6',
+            true
+        );
+        
         // Register frontend assets
         wp_register_style(
             'contact-form-hubspot-frontend',
             CONTACT_FORM_HUBSPOT_PLUGIN_URL . 'assets/css/frontend.css',
-            array(),
+            array('quill-css'),
             CONTACT_FORM_HUBSPOT_VERSION
         );
         
         wp_register_script(
             'contact-form-hubspot-frontend',
             CONTACT_FORM_HUBSPOT_PLUGIN_URL . 'assets/js/frontend.js',
-            array('jquery'),
+            array('jquery', 'quill-js'),
             CONTACT_FORM_HUBSPOT_VERSION,
             true
         );
@@ -239,11 +255,12 @@ class ContactFormHubSpot_Gutenberg_Block {
                         <label for="<?php echo esc_attr($form_id); ?>-message">
                             <?php _e('Message', 'contact-form-hubspot'); ?> <span class="required">*</span>
                         </label>
+                        <div id="<?php echo esc_attr($form_id); ?>-message-editor" class="contact-form-rich-editor"></div>
                         <textarea 
                             id="<?php echo esc_attr($form_id); ?>-message" 
                             name="message" 
                             required 
-                            rows="5"
+                            style="display: none;"
                             aria-describedby="<?php echo esc_attr($form_id); ?>-message-error"
                         ></textarea>
                         <div class="contact-form-error" id="<?php echo esc_attr($form_id); ?>-message-error"></div>
