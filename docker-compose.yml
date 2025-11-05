@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:6.4-php8.1-apache
+    container_name: contact-form-hubspot-wp
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_DEBUG_LOG: 1
+      WORDPRESS_DEBUG_DISPLAY: 0
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./contact-form-hubspot:/var/www/html/wp-content/plugins/contact-form-hubspot
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+      - mysql
+    networks:
+      - contact-form-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: contact-form-hubspot-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - contact-form-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: contact-form-hubspot-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - mysql
+    networks:
+      - contact-form-network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: contact-form-hubspot-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+    networks:
+      - contact-form-network
+
+volumes:
+  wordpress_data:
+  mysql_data:
+
+networks:
+  contact-form-network:
+    driver: bridge
+
+
+

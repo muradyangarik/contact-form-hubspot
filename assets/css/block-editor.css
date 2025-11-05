@@ -1,0 +1,37 @@
+/**
+ * Block Editor Styles for Contact Form HubSpot
+ *
+ * @package ContactFormHubSpot
+ */
+
+/* Block editor wrapper */
+.wp-block-contact-form-hubspot-contact-form {
+    margin: 20px 0;
+}
+
+/* Preview notice in editor */
+.contact-form-hubspot-editor-preview {
+    padding: 15px;
+    background: #f0f0f1;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.contact-form-hubspot-editor-preview p {
+    margin: 0;
+    font-size: 13px;
+    color: #646970;
+}
+
+/* Make the form look good in the editor */
+.editor-styles-wrapper .contact-form-hubspot-wrapper {
+    max-width: 100%;
+}
+
+/* Inspector controls customization */
+.contact-form-hubspot-inspector-help {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 5px;
+}
