@@ -601,13 +601,23 @@ class ContactFormHubSpot_Admin {
         check_ajax_referer('contact_form_hubspot_admin', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions.', 'contact-form-hubspot'));
+            wp_send_json_error(array(
+                'message' => __('You do not have sufficient permissions.', 'contact-form-hubspot')
+            ));
         }
         
         $hubspot_api = ContactFormHubSpot_HubSpot_API::get_instance();
         $result = $hubspot_api->test_connection();
         
-        wp_send_json($result);
+        if ($result['success']) {
+            wp_send_json_success(array(
+                'message' => $result['message']
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => $result['message']
+            ));
+        }
     }
     
     /**

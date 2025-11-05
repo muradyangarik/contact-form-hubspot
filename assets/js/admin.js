@@ -49,6 +49,9 @@
             const $button = $('#test-connection');
             const originalText = $button.text();
             
+            // Remove any existing notices
+            $('.notice').remove();
+            
             $button.prop('disabled', true).text(contactFormHubSpotAdmin.messages.testing);
             
             $.ajax({
@@ -60,12 +63,19 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        this.showNotice('success', contactFormHubSpotAdmin.messages.success);
+                        const message = response.data && response.data.message 
+                            ? response.data.message 
+                            : contactFormHubSpotAdmin.messages.success;
+                        this.showNotice('success', message);
                     } else {
-                        this.showNotice('error', response.data || contactFormHubSpotAdmin.messages.error);
+                        const message = response.data && response.data.message 
+                            ? response.data.message 
+                            : contactFormHubSpotAdmin.messages.error;
+                        this.showNotice('error', message);
                     }
                 },
-                error: () => {
+                error: (xhr, status, error) => {
+                    console.error('Test connection error:', error);
                     this.showNotice('error', contactFormHubSpotAdmin.messages.error);
                 },
                 complete: () => {
@@ -114,26 +124,42 @@
         }
 
         showNotice(type, message) {
+            // Remove any existing notices first
+            $('.notice.contact-form-notice').remove();
+            
             const noticeClass = type === 'success' ? 'notice-success' : 'notice-error';
             const $notice = $(`
-                <div class="notice ${noticeClass} is-dismissible">
-                    <p>${message}</p>
+                <div class="notice ${noticeClass} is-dismissible contact-form-notice" style="display:none;">
+                    <p><strong>${message}</strong></p>
                     <button type="button" class="notice-dismiss">
                         <span class="screen-reader-text">Dismiss this notice.</span>
                     </button>
                 </div>
             `);
             
+            // Add notice after the h1 title
             $('.wrap h1').after($notice);
             
-            // Auto-dismiss after 5 seconds
+            // Fade in the notice
+            $notice.fadeIn(300);
+            
+            // Scroll to the notice
+            $('html, body').animate({
+                scrollTop: $notice.offset().top - 100
+            }, 300);
+            
+            // Auto-dismiss after 8 seconds
             setTimeout(() => {
-                $notice.fadeOut();
-            }, 5000);
+                $notice.fadeOut(400, function() {
+                    $(this).remove();
+                });
+            }, 8000);
             
             // Handle manual dismiss
             $notice.on('click', '.notice-dismiss', function() {
-                $notice.fadeOut();
+                $notice.fadeOut(300, function() {
+                    $(this).remove();
+                });
             });
         }
     }

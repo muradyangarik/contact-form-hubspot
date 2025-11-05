@@ -258,22 +258,45 @@
 }
 
 /* Notices */
-/* Hide unrelated admin notices on our settings screen to reduce noise */
-.settings_page_contact-form-hubspot .notice,
-.settings_page_contact-form-hubspot .update-nag,
-.settings_page_contact-form-hubspot .wrap > .notice,
-.settings_page_contact-form-hubspot .wrap > .updated,
-.settings_page_contact-form-hubspot .wrap > .error,
-.settings_page_contact-form-hubspot .wrap > p {
-    display: none;
+/* Our custom notices */
+.notice.contact-form-notice {
+    display: block !important;
+    margin: 15px 0 20px 0 !important;
+    padding: 12px 15px !important;
+    border-left-width: 4px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease;
 }
 
-.contact-form-hubspot-admin .notice {
-    margin: 15px 0;
+.notice.contact-form-notice.notice-success {
+    border-left-color: #46b450 !important;
+    background: #ecf7ed !important;
 }
 
-.contact-form-hubspot-admin .notice p {
-    margin: 0.5em 0;
+.notice.contact-form-notice.notice-error {
+    border-left-color: #dc3232 !important;
+    background: #fef7f7 !important;
+}
+
+.notice.contact-form-notice p {
+    margin: 0.5em 0 !important;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.notice.contact-form-notice strong {
+    font-weight: 600;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Loading states */
